@@ -24,5 +24,6 @@ public enum Os {
 	OS390,
 	VMESA,
 	LINUX390,
-	MACOSX
+	MACOSX,
+	IBMi
 }

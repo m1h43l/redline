@@ -1,17 +1,102 @@
 package org.redline_rpm;
 
+import static org.redline_rpm.header.Flags.EQUAL;
+import static org.redline_rpm.header.Flags.GREATER;
+import static org.redline_rpm.header.Flags.LESS;
+import static org.redline_rpm.header.Flags.RPMLIB;
+import static org.redline_rpm.header.Header.HeaderTag.ARCH;
+import static org.redline_rpm.header.Header.HeaderTag.BASENAMES;
+import static org.redline_rpm.header.Header.HeaderTag.BUILDHOST;
+import static org.redline_rpm.header.Header.HeaderTag.BUILDTIME;
+import static org.redline_rpm.header.Header.HeaderTag.CONFLICTFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.CONFLICTNAME;
+import static org.redline_rpm.header.Header.HeaderTag.CONFLICTVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.DESCRIPTION;
+import static org.redline_rpm.header.Header.HeaderTag.DIRINDEXES;
+import static org.redline_rpm.header.Header.HeaderTag.DIRNAMES;
+import static org.redline_rpm.header.Header.HeaderTag.DISTRIBUTION;
+import static org.redline_rpm.header.Header.HeaderTag.EPOCH;
+import static org.redline_rpm.header.Header.HeaderTag.FILECONTEXTS;
+import static org.redline_rpm.header.Header.HeaderTag.FILEDEVICES;
+import static org.redline_rpm.header.Header.HeaderTag.FILEFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.FILEGROUPNAME;
+import static org.redline_rpm.header.Header.HeaderTag.FILEINODES;
+import static org.redline_rpm.header.Header.HeaderTag.FILELANGS;
+import static org.redline_rpm.header.Header.HeaderTag.FILELINKTOS;
+import static org.redline_rpm.header.Header.HeaderTag.FILEMD5S;
+import static org.redline_rpm.header.Header.HeaderTag.FILEMODES;
+import static org.redline_rpm.header.Header.HeaderTag.FILEMTIMES;
+import static org.redline_rpm.header.Header.HeaderTag.FILERDEVS;
+import static org.redline_rpm.header.Header.HeaderTag.FILESIZES;
+import static org.redline_rpm.header.Header.HeaderTag.FILEUSERNAME;
+import static org.redline_rpm.header.Header.HeaderTag.FILEVERIFYFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.GROUP;
+import static org.redline_rpm.header.Header.HeaderTag.HEADERI18NTABLE;
+import static org.redline_rpm.header.Header.HeaderTag.HEADERIMMUTABLE;
+import static org.redline_rpm.header.Header.HeaderTag.LICENSE;
+import static org.redline_rpm.header.Header.HeaderTag.NAME;
+import static org.redline_rpm.header.Header.HeaderTag.OBSOLETEFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.OBSOLETENAME;
+import static org.redline_rpm.header.Header.HeaderTag.OBSOLETEVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.OS;
+import static org.redline_rpm.header.Header.HeaderTag.PACKAGER;
+import static org.redline_rpm.header.Header.HeaderTag.PAYLOADCOMPRESSOR;
+import static org.redline_rpm.header.Header.HeaderTag.PAYLOADFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.PAYLOADFORMAT;
+import static org.redline_rpm.header.Header.HeaderTag.PLATFORM;
+import static org.redline_rpm.header.Header.HeaderTag.POSTINPROG;
+import static org.redline_rpm.header.Header.HeaderTag.POSTINSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.POSTTRANSPROG;
+import static org.redline_rpm.header.Header.HeaderTag.POSTTRANSSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.POSTUNPROG;
+import static org.redline_rpm.header.Header.HeaderTag.POSTUNSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.PREFIXES;
+import static org.redline_rpm.header.Header.HeaderTag.PREINPROG;
+import static org.redline_rpm.header.Header.HeaderTag.PREINSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.PRETRANSPROG;
+import static org.redline_rpm.header.Header.HeaderTag.PRETRANSSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.PREUNPROG;
+import static org.redline_rpm.header.Header.HeaderTag.PREUNSCRIPT;
+import static org.redline_rpm.header.Header.HeaderTag.PROVIDEFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.PROVIDENAME;
+import static org.redline_rpm.header.Header.HeaderTag.PROVIDEVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.RELEASE;
+import static org.redline_rpm.header.Header.HeaderTag.REQUIREFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.REQUIRENAME;
+import static org.redline_rpm.header.Header.HeaderTag.REQUIREVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.RHNPLATFORM;
+import static org.redline_rpm.header.Header.HeaderTag.RPMVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.SIZE;
+import static org.redline_rpm.header.Header.HeaderTag.SOURCERPM;
+import static org.redline_rpm.header.Header.HeaderTag.SUMMARY;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERFLAGS;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERINDEX;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERNAME;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERSCRIPTPROG;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERSCRIPTS;
+import static org.redline_rpm.header.Header.HeaderTag.TRIGGERVERSION;
+import static org.redline_rpm.header.Header.HeaderTag.URL;
+import static org.redline_rpm.header.Header.HeaderTag.VENDOR;
+import static org.redline_rpm.header.Header.HeaderTag.VERSION;
+import static org.redline_rpm.header.Signature.SignatureTag.LEGACY_MD5;
+import static org.redline_rpm.header.Signature.SignatureTag.LEGACY_SIGSIZE;
+import static org.redline_rpm.header.Signature.SignatureTag.PAYLOADSIZE;
+import static org.redline_rpm.header.Signature.SignatureTag.SHA1HEADER;
+import static org.redline_rpm.header.Signature.SignatureTag.SIGNATURES;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.RandomAccessFile;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -20,13 +105,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.GZIPOutputStream;
-import java.security.NoSuchAlgorithmException;
-import java.security.PrivateKey;
 
 import org.bouncycastle.openpgp.PGPPrivateKey;
+import org.redline_rpm.ChannelWrapper.Key;
 import org.redline_rpm.changelog.ChangelogHandler;
 import org.redline_rpm.changelog.ChangelogParseException;
+import org.redline_rpm.header.AbstractHeader.Entry;
+import org.redline_rpm.header.AbstractHeader.Tag;
 import org.redline_rpm.header.Architecture;
 import org.redline_rpm.header.Format;
 import org.redline_rpm.header.Os;
@@ -34,12 +119,6 @@ import org.redline_rpm.header.RpmType;
 import org.redline_rpm.payload.Contents;
 import org.redline_rpm.payload.CpioHeader;
 import org.redline_rpm.payload.Directive;
-
-import static org.redline_rpm.ChannelWrapper.*;
-import static org.redline_rpm.header.AbstractHeader.*;
-import static org.redline_rpm.header.Flags.*;
-import static org.redline_rpm.header.Signature.SignatureTag.*;
-import static org.redline_rpm.header.Header.HeaderTag.*;
 
 /**
  * The normal entry point to the API used for
@@ -101,8 +180,8 @@ public class Builder {
 		format.getHeader().createEntry( HEADERI18NTABLE, "C");
 		format.getHeader().createEntry( BUILDTIME, ( int) ( System.currentTimeMillis() / 1000));
 		format.getHeader().createEntry( RPMVERSION, "4.4.2");
-		format.getHeader().createEntry( PAYLOADFORMAT, "cpio");
-		format.getHeader().createEntry( PAYLOADCOMPRESSOR, "gzip");
+		format.getHeader().createEntry( PAYLOADFORMAT, "savf");
+		format.getHeader().createEntry( PAYLOADCOMPRESSOR, "none");
 
 		addDependencyLess( "rpmlib(VersionedDependencies)", "3.0.3-1");
 		addDependencyLess( "rpmlib(CompressedFileNames)", "3.0.4-1");
@@ -1338,49 +1417,22 @@ public class Builder {
 		sha.setValues( new String[] { Util.hex( output.finish( shakey))});
         signatureGenerator.finishAfterHeader( output );
 
-		final GZIPOutputStream zip = new GZIPOutputStream( Channels.newOutputStream( output));
-		final WritableChannelWrapper compressor = new WritableChannelWrapper( Channels.newChannel( zip));
+		OutputStream out = Channels.newOutputStream( output);
+		final WritableChannelWrapper compressor = new WritableChannelWrapper( Channels.newChannel( out));
 		final Key< Integer> payloadkey = compressor.start();
 
-		int total = 0;
 		final ByteBuffer buffer = ByteBuffer.allocate( 4096);
 		for ( CpioHeader header : contents.headers()) {
-			if ( ( header.getFlags() & Directive.RPMFILE_GHOST ) == Directive.RPMFILE_GHOST ) {
-				continue;
-			}
-			final String path = header.getName();
-			if ( path.startsWith( "/")) header.setName( "." + path);
-			total = header.write( compressor, total);
 			
 			final Object object = contents.getSource( header);
-			if ( object instanceof File) {
-				FileInputStream fin = new FileInputStream(( File) object);
-				final FileChannel in = fin.getChannel();
-				while ( in.read(( ByteBuffer) buffer.rewind()) > 0) {
-					total += compressor.write(( ByteBuffer) buffer.flip());
-					buffer.compact();
-				}
-				total += header.skip( compressor, total);
-				fin.close();
-			} else if ( object instanceof URL) {
-				final ReadableByteChannel in = Channels.newChannel((( URL) object).openConnection().getInputStream());
-				while ( in.read(( ByteBuffer) buffer.rewind()) > 0) {
-					total += compressor.write(( ByteBuffer) buffer.flip());
-					buffer.compact();
-				}
-				total += header.skip( compressor, total);
-				in.close();
-			} else if ( object instanceof CharSequence) {
-				final CharSequence target = ( CharSequence) object;
-				total += compressor.write( ByteBuffer.wrap( String.valueOf( target).getBytes()));
-				total += header.skip( compressor, target.length());
+			FileInputStream fin = new FileInputStream(( File) object);
+			final FileChannel in = fin.getChannel();
+			while ( in.read(( ByteBuffer) buffer.rewind()) > 0) {
+				compressor.write(( ByteBuffer) buffer.flip());
+				buffer.compact();
 			}
+			fin.close();
 		}
-		
-		final CpioHeader trailer = new CpioHeader();
-		trailer.setLast();
-		total = trailer.write( compressor, total);
-		trailer.skip( compressor, total);
 
 		int length = compressor.finish( payloadkey);
 		int pad = Util.difference( length, 3);
@@ -1388,7 +1440,6 @@ public class Builder {
 		length += pad;
 
 		payload.setValues( new int[] { length});
-		zip.finish();
 		
 		md5.setValues( output.finish( md5key));
 		sigsize.setValues( new int[] { output.finish( sigsizekey)});
