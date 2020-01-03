@@ -103,7 +103,12 @@ public class Header extends AbstractHeader {
 		PROVIDEFLAGS( 1112, INT32_ENTRY, "provideflags"),
 		PROVIDEVERSION( 1113, STRING_ARRAY_ENTRY, "provideversion"),
 		OBSOLETEFLAGS( 1114, INT32_ENTRY, "obsoleteflags"),
-		OBSOLETEVERSION( 1115, STRING_ARRAY_ENTRY, "obsoleteversion");
+		OBSOLETEVERSION( 1115, STRING_ARRAY_ENTRY, "obsoleteversion"),
+		
+		QSYS_SAVED_LIBRARY( 25000, STRING_ENTRY, "savedlibrary"),
+		DATA_PACKAGE( 25001, INT16_ENTRY, "datapackage"),
+		GLOBAL_SERVICE_PROGRAMS( 25002, STRING_ARRAY_ENTRY, "globalserviceprograms"),
+		GLOBAL_MODULES( 25003, STRING_ARRAY_ENTRY, "globalmodules");
 
 		private int code;
 		private int type;

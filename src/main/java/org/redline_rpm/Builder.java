@@ -301,6 +301,19 @@ public class Builder {
 	}
 	
 	/**
+	 * Adds a header entry value to the header. For example use this to set the
+	 * source RPM package name on your RPM
+	 * 
+	 * @param tag
+	 *            the header tag to set
+	 * @param value
+	 *            the value to set the header entry with
+	 */
+	public void addHeaderEntry(final Tag tag, final String[] value) {
+		format.getHeader().createEntry(tag, value);
+	}
+    
+	/**
      * Adds a header entry byte (8-bit) value to the header. 
      * @param tag the header tag to set
      * @param value the value to set the header entry with
@@ -1359,11 +1372,11 @@ public class Builder {
 
 		format.getHeader().createEntry( SIZE, contents.getTotalSize());
 
-		if (0 < contents.size()) {
-			format.getHeader().createEntry(DIRNAMES, contents.getDirNames());
-			format.getHeader().createEntry(DIRINDEXES, contents.getDirIndexes());
-			format.getHeader().createEntry(BASENAMES, contents.getBaseNames());
-		}
+//		if (0 < contents.size()) {
+//			format.getHeader().createEntry(DIRNAMES, contents.getDirNames());
+//			format.getHeader().createEntry(DIRINDEXES, contents.getDirIndexes());
+//			format.getHeader().createEntry(BASENAMES, contents.getBaseNames());
+//		}
 
 
 		if ( 0 < triggerCounter) {
