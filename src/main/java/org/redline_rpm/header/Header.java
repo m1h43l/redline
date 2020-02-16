@@ -106,9 +106,10 @@ public class Header extends AbstractHeader {
 		OBSOLETEVERSION( 1115, STRING_ARRAY_ENTRY, "obsoleteversion"),
 		
 		QSYS_SAVED_LIBRARY( 25000, STRING_ENTRY, "savedlibrary"),
-		DATA_PACKAGE( 25001, INT16_ENTRY, "datapackage"),
+		DATA_PACKAGE( 25001, INT32_ENTRY, "datapackage"),
 		GLOBAL_SERVICE_PROGRAMS( 25002, STRING_ARRAY_ENTRY, "globalserviceprograms"),
-		GLOBAL_MODULES( 25003, STRING_ARRAY_ENTRY, "globalmodules");
+		GLOBAL_MODULES( 25003, STRING_ARRAY_ENTRY, "globalmodules"),
+		OS_VERSION( 25004, STRING_ENTRY, "osversion");
 
 		private int code;
 		private int type;

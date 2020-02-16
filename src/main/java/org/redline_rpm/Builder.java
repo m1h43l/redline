@@ -114,6 +114,7 @@ import org.redline_rpm.header.AbstractHeader.Entry;
 import org.redline_rpm.header.AbstractHeader.Tag;
 import org.redline_rpm.header.Architecture;
 import org.redline_rpm.header.Format;
+import org.redline_rpm.header.Header;
 import org.redline_rpm.header.Os;
 import org.redline_rpm.header.RpmType;
 import org.redline_rpm.payload.Contents;
@@ -180,12 +181,7 @@ public class Builder {
 		format.getHeader().createEntry( HEADERI18NTABLE, "C");
 		format.getHeader().createEntry( BUILDTIME, ( int) ( System.currentTimeMillis() / 1000));
 		format.getHeader().createEntry( RPMVERSION, "4.4.2");
-		format.getHeader().createEntry( PAYLOADFORMAT, "savf");
 		format.getHeader().createEntry( PAYLOADCOMPRESSOR, "none");
-
-		addDependencyLess( "rpmlib(VersionedDependencies)", "3.0.3-1");
-		addDependencyLess( "rpmlib(CompressedFileNames)", "3.0.4-1");
-		addDependencyLess( "rpmlib(PayloadFilesHavePrefix)", "4.0-1");
 	}
 	
 	public void addBuiltinDirectory(String builtinDirectory) {
@@ -258,13 +254,29 @@ public class Builder {
 	 * @param version the version identifier.
 	 */
 	public void addDependencyLess( final CharSequence name, final CharSequence version) {
-		int flag = LESS | EQUAL;
+		int flag = LESS;
 		if (name.toString().startsWith("rpmlib(")){
 			flag = flag | RPMLIB; 
 		}
 		addDependency( name, version, flag);
 	}
 
+	/**
+	 * Adds a dependency to the RPM package. This dependency version will be marked as the maximum
+	 * allowed, and the package will require the named dependency with this version or lower at
+	 * install time.
+	 *
+	 * @param name the name of the dependency.
+	 * @param version the version identifier.
+	 */
+	public void addDependencyLessEqual( final CharSequence name, final CharSequence version) {
+		int flag = LESS | EQUAL;
+		if (name.toString().startsWith("rpmlib(")){
+			flag = flag | RPMLIB; 
+		}
+		addDependency( name, version, flag);
+	}
+	
 	/**
 	 * Adds a dependency to the RPM package. This dependency version will be marked as the minimum
 	 * allowed, and the package will require the named dependency with this version or higher at
@@ -1323,7 +1335,17 @@ public class Builder {
 	 * @throws IOException there was an IO error
 	 */
 	public String build( final File directory) throws NoSuchAlgorithmException, IOException {
-		final String rpm = format.getLead().getName() + "." + format.getLead().getArch().toString().toLowerCase() + ".rpm";
+		final String rpm;
+		if (format.getHeader().getEntry(Header.HeaderTag.OS_VERSION) == null) {
+			rpm = format.getLead().getName() + "." + format.getLead().getArch().toString().toLowerCase() + ".rpm";
+		}
+		else {
+			String[] values = (String[]) format.getHeader().getEntry(Header.HeaderTag.OS).getValues();
+			String os = values[0];
+			values = (String[]) format.getHeader().getEntry(Header.HeaderTag.OS_VERSION).getValues();
+			String osVersion = values[0];
+			rpm = format.getLead().getName() + "-" + format.getLead().getArch().toString().toLowerCase() + "-" + os + "-" + osVersion + ".rpm";
+		}
 		final File file = new File( directory, rpm);
 		if ( file.exists()) file.delete();
 		RandomAccessFile raFile = new RandomAccessFile( file, "rw");
