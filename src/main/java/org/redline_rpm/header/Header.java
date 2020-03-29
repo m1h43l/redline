@@ -109,7 +109,8 @@ public class Header extends AbstractHeader {
 		DATA_PACKAGE( 25001, INT32_ENTRY, "datapackage"),
 		GLOBAL_SERVICE_PROGRAMS( 25002, STRING_ARRAY_ENTRY, "globalserviceprograms"),
 		GLOBAL_MODULES( 25003, STRING_ARRAY_ENTRY, "globalmodules"),
-		OS_VERSION( 25004, STRING_ENTRY, "osversion");
+		OS_VERSION( 25004, STRING_ENTRY, "osversion"),
+		FILE_CCSID(25005, INT32_ENTRY, "fileccsid");
 
 		private int code;
 		private int type;
