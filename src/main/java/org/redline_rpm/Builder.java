@@ -1367,10 +1367,12 @@ public class Builder {
 	public void build( final FileChannel original) throws NoSuchAlgorithmException, IOException {
 		final WritableChannelWrapper output = new WritableChannelWrapper( original);
 
-		format.getHeader().createEntry( REQUIRENAME, Dependency.getArrayOfNames(requires));
-		format.getHeader().createEntry( REQUIREVERSION, Dependency.getArrayOfVersions(requires));
-		format.getHeader().createEntry( REQUIREFLAGS, convert(Dependency.getArrayOfFlags(requires)));
-
+		if (!requires.isEmpty()) {
+			format.getHeader().createEntry( REQUIRENAME, Dependency.getArrayOfNames(requires));
+			format.getHeader().createEntry( REQUIREVERSION, Dependency.getArrayOfVersions(requires));
+			format.getHeader().createEntry( REQUIREFLAGS, convert(Dependency.getArrayOfFlags(requires)));
+		}
+		
 		if (0 < obsoletes.size())
 		{
 			format.getHeader().createEntry( OBSOLETENAME, Dependency.getArrayOfNames(obsoletes));
