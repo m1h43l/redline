@@ -453,7 +453,7 @@ public class Builder {
 		format.getHeader().createEntry( RELEASE, release);
 		format.getHeader().createEntry( EPOCH, epoch);
 		this.provides.clear();
-		addProvides(String.valueOf(name), "" + epoch + ":" + version + "-" + release);
+		addProvides(String.valueOf(name), version + "-" + release);
 	}
 
 	public void setPackage( final CharSequence name, final CharSequence version, final CharSequence release) {
