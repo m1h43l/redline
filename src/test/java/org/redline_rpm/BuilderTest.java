@@ -138,7 +138,7 @@ public class BuilderTest extends TestBase {
         String[] provideversion = (String[])format.getHeader().getEntry(HeaderTag.PROVIDEVERSION).getValues();
         assertArrayEquals(new String[] { "testCapabilities", "frobnicator", "barnacle" }, provide);
         assertArrayEquals(new    int[] { EQUAL,              0,             EQUAL      }, provideflags);
-        assertArrayEquals(new String[] { "0:1.0-1",          "",            "3.89"     }, provideversion);
+        assertArrayEquals(new String[] { "1.0-1",          "",            "3.89"     }, provideversion);
 
         String[] conflict = (String[])format.getHeader().getEntry(HeaderTag.CONFLICTNAME).getValues();
         int[] conflictflags = (int[])format.getHeader().getEntry(HeaderTag.CONFLICTFLAGS).getValues();

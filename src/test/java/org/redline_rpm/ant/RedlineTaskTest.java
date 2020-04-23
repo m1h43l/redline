@@ -276,7 +276,7 @@ public class RedlineTaskTest extends TestBase {
 		String[] provideversion = (String[])format.getHeader().getEntry(HeaderTag.PROVIDEVERSION).getValues();
 		assertArrayEquals(new String[] { "rpmtest", "provone", "provtwo", "provthree" }, provide);
 		assertArrayEquals(new    int[] { EQUAL,     EQUAL,     EQUAL,     0           }, provideflags);
-		assertArrayEquals(new String[] { "0:1.0-1", "1.1",     "2.1",     ""          }, provideversion);
+		assertArrayEquals(new String[] { "1.0-1", "1.1",     "2.1",     ""          }, provideversion);
 
 		String[] conflict = (String[])format.getHeader().getEntry(HeaderTag.CONFLICTNAME).getValues();
 		int[] conflictflags = (int[])format.getHeader().getEntry(HeaderTag.CONFLICTFLAGS).getValues();
